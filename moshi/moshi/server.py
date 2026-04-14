@@ -340,6 +340,12 @@ def _get_voice_prompt_dir(voice_prompt_dir: Optional[str], hf_repo: str) -> Opti
 
 def _get_static_path(static: Optional[str]) -> Optional[str]:
     if static is None:
+        # Check if local frontend build exists
+        local_dist = Path(__file__).parent.parent.parent / "client" / "dist"
+        if (local_dist / "index.html").exists():
+            logger.info(f"Using local static content from {local_dist}")
+            return str(local_dist)
+
         logger.info("retrieving the static content")
         dist_tgz = hf_hub_download("nvidia/personaplex-7b-v1", "dist.tgz")
         dist_tgz = Path(dist_tgz)
